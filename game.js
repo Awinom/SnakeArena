@@ -20,8 +20,7 @@ let food = generateFood();
 let direction = 'right';
 let nextDirection = 'right';
 
-// Генерация еды
-/*
+// Генерация едыыыыыыыыыыыыыыыы
 function generateFood() {
     let newFood;
     do {
@@ -33,7 +32,7 @@ function generateFood() {
     
     return newFood;
 }
-*/
+
 
 // Основной игровой цикл
 function gameLoop(timestamp) {
