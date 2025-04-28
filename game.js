@@ -21,6 +21,7 @@ let direction = 'right';
 let nextDirection = 'right';
 
 // Генерация еды
+/*
 function generateFood() {
     let newFood;
     do {
@@ -32,7 +33,7 @@ function generateFood() {
     
     return newFood;
 }
-
+*/
 
 // Основной игровой цикл
 function gameLoop(timestamp) {
