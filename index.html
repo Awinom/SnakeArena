@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- GITHUB -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div class="score">Счёт: <span id="score">0</span></div>
+		<div class="controls">
+			<div class="control-row">
+				<button class="control-btn" id="upBtn" aria-label="Вверх">
+					<svg class="control-icon" viewBox="0 0 24 24"><path d="M12 6L5 15h14z"
+																	fill="white"
+																	stroke="white"																	
+																	stroke-linejoin="round"
+																	stroke-width="2.5"/></svg>
+				</button>
+			</div>
+			<div class="control-row">
+				<button class="control-btn" id="leftBtn" aria-label="Влево">
+					<svg class="control-icon" viewBox="0 0 24 24"><path d="M6 12l9-7v14z"
+																	fill="white"
+																	stroke="white"																	
+																	stroke-linejoin="round"
+																	stroke-width="2.5"/></svg>
+				</button>
+				<button class="control-btn" id="rightBtn" aria-label="Вправо">
+					<svg class="control-icon" viewBox="0 0 24 24"><path d="M18 12L9 5v14z"
+																	fill="white"
+																	stroke="white"																	
+																	stroke-linejoin="round"
+																	stroke-width="2.5"/></svg>
+				</button>
+			</div>
+			<div class="control-row">				
+				<button class="control-btn" id="downBtn" aria-label="Вниз">
+					<svg class="control-icon" viewBox="0 0 24 24"><path d="M12 18l7-9H5z"
+																	fill="white"
+																	stroke="white"																	
+																	stroke-linejoin="round"
+																	stroke-width="2.5"/></svg>
+				</button>
+				
+			</div>
+		</div>
+		
+    </div>
+</div>
+    <script src="game.js"></script>
+	<div id="pauseIndicator">⏸️ ПАУЗА</div>
+</body>
+</html>
