@@ -20,7 +20,7 @@ let food = generateFood();
 let direction = 'right';
 let nextDirection = 'right';
 
-// Генерация едыыыыыыыыыыыыыы
+// Генерация еды
 function generateFood() {
     let newFood;
     do {
