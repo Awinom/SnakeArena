@@ -6,9 +6,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div class="score">Счёт: <span id="score">0</span></div>
+    <div class="game-container">  
+		<div class="score-container">
+			<div class="score-box">
+				<span class="score-label">СЧЕТ:</span>
+				<span id="score" class="score-value">0</span>
+			</div>
+			<canvas id="gameCanvas"></canvas>
+		</div>		
 		<div class="controls">
 			<div class="control-row">
 				<button class="control-btn" id="upBtn" aria-label="Вверх">
