@@ -37,7 +37,7 @@ body {
 
 /* Счет */
 .score-container {
-    width: calc(100vh - 40vh);
+    width: calc(100vh - 44vh);
 	max-width: 100%;
     display: flex;
     justify-content: center;
@@ -64,8 +64,8 @@ body {
 
 /* Игровое поле */
 canvas {
-    width: calc(100vh - 40vh);
-    height: calc(100vh - 40vh);
+    width: calc(100vh - 44vh);
+    height: calc(100vh - 44vh);
 	max-width: 95vw;
     max-height: 95vw;
     background: #222;
@@ -94,7 +94,7 @@ canvas {
     display: flex;
     justify-content: center;
     width: 100%;
-    gap: 10vh;
+    gap: clamp(30px, 10vw, 50px); /* Минимум 30px, максимум 50px, адаптивно под экран */
 }
 /* Сами кнопки */
 .control-btn {
@@ -174,8 +174,8 @@ canvas {
         width: 30vmin;
         margin: 0 0 0 2vmin;
 		justify-content: flex-end;
-		right: 6vmin;
-        bottom: 4vmin;
+		right: clamp(0px, 8vw, 30px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+        bottom: 2vmin;
     }
 	
 	.control-btn {
@@ -183,12 +183,12 @@ canvas {
 		height: 10vmin;
 		max-width: 60px;
 		max-height: 60px;
-		min-width: 43px;
-		min-height: 43px;
+		min-width: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+		min-height: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
 	}
 	
     .control-row {
-        gap: 13vmin;
+        gap: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
     }
 	
 }
