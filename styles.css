@@ -37,7 +37,7 @@ body {
 
 /* Счет */
 .score-container {
-    width: calc(100vh - 35vh);
+    width: calc(100vh - 40vh);
 	max-width: 100%;
     display: flex;
     justify-content: center;
@@ -57,15 +57,15 @@ body {
 
 .score-label, .score-value {
     color: #fff;
-    font-size: 2.5vmin;
+    font-size: 4vmin;
     font-weight: bold;
     text-shadow: 0 0.5vmin 1vmin rgba(0,0,0,0.5);
 }
 
 /* Игровое поле */
 canvas {
-    width: calc(100vh - 35vh);
-    height: calc(100vh - 35vh);
+    width: calc(100vh - 40vh);
+    height: calc(100vh - 40vh);
 	max-width: 95vw;
     max-height: 95vw;
     background: #222;
@@ -80,8 +80,8 @@ canvas {
 .controls {
     bottom: 0;       /* Прижимаем к нижнему краю */
     width: 95%;     /* Полная ширина */
-	max-width: 120px;
-    max-height: 120px;
+	max-width: 240px;
+    max-height: 240px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,14 +94,16 @@ canvas {
     display: flex;
     justify-content: center;
     width: 100%;
-    gap: 10vmin;
+    gap: 10vh;
 }
 /* Сами кнопки */
 .control-btn {
     width: 10vmin;
     height: 10vmin;
-    max-width: 32px;
-    max-height: 32px;
+    max-width: 60px;
+    max-height: 60px;
+	min-width: 30px;
+    min-height: 30px;
     background: rgba(245, 245, 245, 0.3);
     border-radius: 1.5vmin;
     display: grid;
@@ -113,8 +115,10 @@ canvas {
 .control-icon {
     width: 3vmin;
     height: 3vmin;
-    max-width: 20px;
-    max-height: 20px;
+    max-width: 40px;
+    max-height: 40px;
+	min-width: 10px;
+    min-height: 10px;
 }
 
 /* Пауза */
@@ -159,8 +163,8 @@ canvas {
     }
 
     canvas {
-    width: calc(100vw - 35vw);
-    height: calc(100vw - 35vw);
+    width: calc(100vw - 45vw);
+    height: calc(100vw - 45vw);
 	max-width: 90vh;
     max-height: 90vh;
 	}
@@ -170,12 +174,21 @@ canvas {
         width: 30vmin;
         margin: 0 0 0 2vmin;
 		justify-content: flex-end;
-		right: 2vmin;
+		right: 6vmin;
         bottom: 4vmin;
     }
 	
+	.control-btn {
+		width: 10vmin;
+		height: 10vmin;
+		max-width: 60px;
+		max-height: 60px;
+		min-width: 43px;
+		min-height: 43px;
+	}
+	
     .control-row {
-        gap: 9vmin;
+        gap: 13vmin;
     }
 	
 }
