@@ -60,22 +60,33 @@ function gameLoop(timestamp) {
 }
 
 function updateSnake() {
-    direction = nextDirection;
-    
+    direction = nextDirection;    
     // Перемещение головы
     const head = {...snake[0]};
     
+	// Обновляем позицию головы с учётом телепортации
     switch (direction) {
-        case 'up': head.y -= 1; break;
-        case 'down': head.y += 1; break;
-        case 'left': head.x -= 1; break;
-        case 'right': head.x += 1; break;
+        case 'up': 
+			head.y = (head.y - 1 + GRID_COUNT) % GRID_COUNT;; 
+			break;
+        case 'down': 
+			head.y = (head.y + 1) % GRID_COUNT; 
+			break;
+        case 'left': 
+			head.x = (head.x - 1 + GRID_COUNT) % GRID_COUNT; 
+			break;
+        case 'right': 
+			head.x = (head.x + 1) % GRID_COUNT; 
+			break;
     }
     
+	// Проверяем еду ДО добавления новой головы
+    const willEatFood = head.x === food.x && head.y === food.y;
+	
     snake.unshift(head);
     
     // Проверка съедения еды
-    if (head.x === food.x && head.y === food.y) {
+    if (willEatFood) {
         score += 10;
         scoreElement.textContent = score;
         food = generateFood();
@@ -85,16 +96,9 @@ function updateSnake() {
 }
 
 function checkCollision() {
-    const head = snake[0];
+    const head = snake[0];    
     
-	
-	// Телепортация при выходе за границы
-    if (head.x < 0) head.x = GRID_COUNT - 1;
-    if (head.x >= GRID_COUNT) head.x = 0;
-    if (head.y < 0) head.y = GRID_COUNT - 1;
-    if (head.y >= GRID_COUNT) head.y = 0;
-    
-    // Сама в себя
+    // столкновение с собой
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
             return true;
