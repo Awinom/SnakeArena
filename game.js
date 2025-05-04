@@ -2,6 +2,11 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 
+const gameOverScreen = document.getElementById('gameOverScreen');
+const finalScoreElement = document.getElementById('finalScore');
+const restartButton = document.getElementById('restartButton');
+const exitButton = document.getElementById('exitButton');
+
 // Минимальный размер стандартного поля
 const MIN_FIELD_WIDTH = 600;  // Минимальная ширина в пикселях
 const MIN_FIELD_HEIGHT = 600; // Минимальная высота в пикселях
@@ -175,10 +180,33 @@ function draw() {
     ctx.fill();
 }
 
+// функция gameOver
 function gameOver() {
-    alert(`Игра окончена! Ваш счёт: ${score}`);
-    resetGame();
+    finalScoreElement.textContent = score;
+    
+    // Показываем экран окончания игры
+    gameOverScreen.classList.add('active');
+    canvas.classList.add('paused');
+    
+    // Останавливаем игровой цикл
+    cancelAnimationFrame(gameLoop);
 }
+
+// Обработчики кнопок проигрыша
+restartButton.addEventListener('click', () => {
+    gameOverScreen.classList.remove('active');
+    canvas.classList.remove('paused');
+    resetGame();
+    isPaused = false;
+    lastTime = 0; // Сбрасываем таймер
+    gameLoop(); // Запускаем игру заново
+});
+
+exitButton.addEventListener('click', () => {
+    // Заглушка для будущего функционала
+    console.log('Выход в главное меню');
+    // location.href = 'menu.html'; // Раскомментируйте когда будет главное меню
+});
 
 function resetGame() {
     snake = [
