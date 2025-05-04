@@ -120,7 +120,7 @@ function updateSnake() {
     
     // Проверка съедения еды
     if (willEatFood) {
-        score += 10;
+        score += 1;
         scoreElement.textContent = score;
         food = generateFood();
     } else {
