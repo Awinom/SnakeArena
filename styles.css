@@ -122,13 +122,13 @@ canvas {
     min-height: 14px;
 }
 
-/* Пауза */
+/* Индикатор паузы - всегда по центру экрана */
 #pauseIndicator {
-    position: absolute;
+    position: absolute; /* Важно: absolute относительно canvas */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7);
+    /*background: rgba(0,0,0,0.8); */
     color: white;
     padding: 2vmin 4vmin;
     border-radius: 2vmin;
@@ -136,7 +136,19 @@ canvas {
     display: none;
     z-index: 10;
     text-align: center;
+    pointer-events: none;
+	/* Адаптивные настройки */
+    min-width: 30%;
+    max-width: 80%;
+    box-sizing: border-box;
+    white-space: nowrap;
 }
+
+/* Затемнение canvas при паузе */
+canvas.paused {
+    filter: brightness(0.4);
+}
+
 
 /* Темная тема */
 @media (prefers-color-scheme: dark) {

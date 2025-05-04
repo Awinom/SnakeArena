@@ -50,6 +50,7 @@ initGameSize();
 // Обработчик изменения размера
 window.addEventListener('resize', () => {
   initGameSize();
+  if (isPaused) {updatePauseIndicator(); };// Пересчитываем позицию при изменении размера    
   draw(); // Перерисовываем без сброса игры
 });
 
@@ -196,7 +197,17 @@ function resetGame() {
 // Функция обновления индикатора паузы
 function updatePauseIndicator() {
     const indicator = document.getElementById('pauseIndicator');
-    indicator.style.display = isPaused ? 'block' : 'none';
+	if (isPaused) {
+        // Позиционируем индикатор относительно canvas
+        const canvasRect = canvas.getBoundingClientRect();
+        indicator.style.display = 'block';
+        indicator.style.position = 'absolute';
+        indicator.style.left = `${canvasRect.left + canvasRect.width / 2}px`;
+        indicator.style.top = `${canvasRect.top + canvasRect.height / 2}px`;
+        indicator.style.transform = 'translate(-50%, -50%)';
+    } else {
+        indicator.style.display = 'none';
+    }
 }
 
 // Управление
@@ -212,25 +223,16 @@ document.addEventListener('keydown', e => {
 // Обработка паузы
 canvas.addEventListener('click', () => {
     isPaused = !isPaused; // Переключаем состояние
-	canvas.classList.toggle('paused', isPaused);
-	updatePauseIndicator();
-    if (!isPaused) gameLoop(); // Возобновляем игру
-    
+	document.querySelector('.game-container').classList.toggle('paused', isPaused);
+    canvas.classList.toggle('paused', isPaused);
+    updatePauseIndicator();
+    if (!isPaused){
+        requestAnimationFrame(gameLoop); // Возобновляем игру
+    }
 });
 
-canvas.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-}, {passive: true});
-
-canvas.addEventListener('touchend', (e) => {
-    if (Math.abs(e.changedTouches[0].clientX - touchStartX) < 10) {
-        isPaused = !isPaused;
-        updatePauseIndicator();
-    }
-}, {passive: true});
 
 // Для мобильных устройств
-
 // Обработчики кнопок управления
 document.getElementById('upBtn').addEventListener('click', () => {
     if (direction !== 'down') nextDirection = 'up';
