@@ -25,8 +25,8 @@ body {
 .game-container {
     width: 95%;
     height: 95%;
-    max-width: 600px;
-    max-height: 600px;
+    max-width: 96%;
+    max-height: 96%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,6 +73,7 @@ canvas {
     box-shadow: 0 0 2vmin rgba(0,0,0,0.5);
     display: block;
 	margin: 0 auto; /* Центрирование по горизонтали */
+
 }
 
 
@@ -80,8 +81,8 @@ canvas {
 .controls {
     bottom: 0;       /* Прижимаем к нижнему краю */
     width: 95%;     /* Полная ширина */
-	max-width: 240px;
-    max-height: 240px;
+	/*max-width: 240px; */
+    /*max-height: 240px; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,16 +95,16 @@ canvas {
     display: flex;
     justify-content: center;
     width: 100%;
-    gap: clamp(30px, 10vw, 50px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+    gap: clamp(45px, 15vw, 500px); /* Минимум 30px, максимум 500px, адаптивно под экран */
 }
 /* Сами кнопки */
 .control-btn {
-    width: 10vmin;
-    height: 10vmin;
-    max-width: 60px;
-    max-height: 60px;
-	min-width: 30px;
-    min-height: 30px;
+    width: 15vmin;
+    height: 15vmin;
+    max-width: 15vmin; 
+    max-height: 15vmin;
+	min-width: 45px;
+    min-height: 45px;
     background: rgba(245, 245, 245, 0.3);
     border-radius: 1.5vmin;
     display: grid;
@@ -113,12 +114,12 @@ canvas {
 }
 
 .control-icon {
-    width: 3vmin;
-    height: 3vmin;
-    max-width: 40px;
-    max-height: 40px;
-	min-width: 10px;
-    min-height: 10px;
+    width: 5vmin;
+    height: 5vmin;
+    max-width: 5vmin; 
+    max-height: 5vmin;
+	min-width: 14px;
+    min-height: 14px;
 }
 
 /* Пауза */
@@ -170,25 +171,25 @@ canvas {
 	}
 	
     .controls {
-		position: fixed;
+		position: absolute;
         width: 30vmin;
         margin: 0 0 0 2vmin;
 		justify-content: flex-end;
-		right: clamp(0px, 8vw, 30px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+		right: clamp(0px, 9vw, 300px); /* Минимум 30px, максимум 50px, адаптивно под экран */
         bottom: 2vmin;
     }
 	
 	.control-btn {
 		width: 10vmin;
 		height: 10vmin;
-		max-width: 60px;
-		max-height: 60px;
-		min-width: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
-		min-height: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+		max-width: 450px;
+		max-height: 450px;
+		min-width: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+		min-height: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
 	}
 	
     .control-row {
-        gap: clamp(30px, 10vw, 45px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+        gap: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
     }
 	
 }
