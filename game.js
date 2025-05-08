@@ -7,6 +7,10 @@ const finalScoreElement = document.getElementById('finalScore');
 const restartButton = document.getElementById('restartButton');
 const exitButton = document.getElementById('exitButton');
 
+const mainMenu = document.getElementById('mainMenu');
+const playButton = document.getElementById('playButton');
+const settingsButton = document.getElementById('settingsButton');
+
 // Минимальный размер стандартного поля
 const MIN_FIELD_WIDTH = 600;  // Минимальная ширина в пикселях
 const MIN_FIELD_HEIGHT = 600; // Минимальная высота в пикселях
@@ -28,6 +32,49 @@ let snake = [{x: GRID_COUNT_X/2, y: GRID_COUNT_Y/2}];
 let food = generateFood();
 let direction = 'right';
 let nextDirection = 'right';
+
+function initGame() {
+    hideMainMenu();
+    resetGame();
+    gameLoop();
+}
+
+// Показ главного меню
+function showMainMenu() {
+    mainMenu.style.display = 'flex';
+    setTimeout(() => {
+        mainMenu.style.opacity = '1';
+    }, 10);
+    canvas.classList.add('paused');
+}
+
+// Обработчик кнопки старта
+//playButton.addEventListener('click', initGame);
+// Обработчик кнопки "Играть"
+playButton.addEventListener('click', () => {
+    hideMainMenu();
+    canvas.classList.remove('paused');
+    resetGame();
+    isPaused = false;
+    lastTime = 0;
+    if (!isPaused) {
+        requestAnimationFrame(gameLoop);
+    }
+});
+
+// Обработчик кнопки "Настройки" (заглушка)
+settingsButton.addEventListener('click', () => {
+    console.log('Открыть настройки');
+    // Реализуйте по необходимости
+});
+
+// Скрытие главного меню
+function hideMainMenu() {
+    mainMenu.style.opacity = '0';
+    setTimeout(() => {
+        mainMenu.style.display = 'none';
+    }, 300);
+}
 
 // Масштабирование под экран
 function initGameSize() {
@@ -203,9 +250,8 @@ restartButton.addEventListener('click', () => {
 });
 
 exitButton.addEventListener('click', () => {
-    // Заглушка для будущего функционала
-    console.log('Выход в главное меню');
-    // location.href = 'menu.html'; // Раскомментируйте когда будет главное меню
+	gameOverScreen.classList.remove('active');
+    showMainMenu();
 });
 
 function resetGame() {
@@ -280,5 +326,7 @@ document.getElementById('rightBtn').addEventListener('click', () => {
 
 
 // Старт игры
-resetGame();
-gameLoop();
+showMainMenu();
+//mainMenu.style.display = 'flex';
+ //resetGame();
+//gameLoop();

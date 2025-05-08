@@ -226,6 +226,74 @@ canvas.paused {
 
 
 
+/* Начальный экран */
+.main-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    flex-direction: column;
+}
+
+.menu-content {
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2vmin; /* Расстояние между кнопками */
+    width: 80%;
+    max-width: 300px;
+}
+
+.game-title {
+    color: #4CAF50;
+    font-size: 10vmin;
+    margin-bottom: 5vmin;
+    text-shadow: 0 0 2vmin rgba(76, 175, 80, 0.5);
+}
+
+.menu-btn {
+    padding: 3vmin 0vmin;
+    font-size: 3vmin;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 1vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0vmin;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 3vmin rgba(76, 175, 80, 0.7);
+}
+
+.controls-hint {
+    color: #aaa;
+    font-size: 3vmin;
+    margin-top: 3vmin;
+	max-width: 60vw;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 
 /* Темная тема */
 @media (prefers-color-scheme: dark) {
