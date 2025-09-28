@@ -1,0 +1,870 @@
+/* ------------------------------------------------------------ */
+/*                   ---Начальный экран---                      */
+/* ------------------------------------------------------------ */
+.main-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    flex-direction: column;
+}
+
+.menu-content {
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2vmin; /* Расстояние между кнопками */
+    width: 80%;
+    max-width: 300px;
+}
+
+.game-title {
+    color: #4CAF50;
+    font-size: 10vmin;
+    margin-bottom: 5vmin;
+    text-shadow: 0 0 2vmin rgba(76, 175, 80, 0.5);
+}
+
+.menu-btn {
+    padding: 3vmin 0vmin;
+    font-size: 3vmin;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 1vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0vmin;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 3vmin rgba(76, 175, 80, 0.7);
+}
+
+.controls-hint {
+    color: #aaa;
+    font-size: 3vmin;
+    margin-top: 3vmin;
+	max-width: 60vw;
+}
+
+/* ------------------------------------------------------------ */
+/*                      ---Экран ИГРЫ---                        */
+/* ------------------------------------------------------------ */
+
+/* Скрытие игрового контейнера */
+.game-container.hidden {
+    display: none !important;
+}
+
+/* Счет */
+.score-container {
+   background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 1vmin rgba(0,0,0,0.3);
+    order: 1;
+    max-width: 99%;
+    max-height: 90vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1vmin;
+    box-sizing: border-box;
+}
+
+.score-box {
+    border-radius: 1vmin;
+    padding: 1vmin 3vmin;
+    display: flex;
+    align-items: center;
+    gap: 1vmin;
+}
+
+.score-label, .score-value {
+    color: #d6d6d6;
+    font-size: 4vmin;
+    font-weight: bold;
+    text-shadow: 0 0.5vmin 1vmin rgba(0,0,0,0.5);
+}
+
+/* Кнопка выхода */
+.exit-game-btn {
+    background: rgba(55, 55, 55, 0.6);
+    color: white;
+    border: none;
+    border-radius: 1vmin;
+    padding: 1.5vmin 2.5vmin;
+    font-size: 3vmin;
+    width: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exit-game-btn:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 2vmin #454545;
+}
+
+/* Игровое поле */
+canvas {
+    /*width: calc(100vh - 44vh);
+    height: calc(100vh - 44vh);*/
+    order: 2;
+	max-width: 99%;
+    max-height: 90vh;
+    background: #222;
+    border-radius: 1vmin;
+    box-shadow: 0 0 2vmin rgba(0,0,0,0.5);
+    align-self: flex-start;
+    display: block;
+	margin: 0 auto; /* Центрирование по горизонтали */
+}
+
+/* Индикатор паузы - всегда по центру экрана */
+#pauseIndicator {
+    position: absolute; /* Важно: absolute относительно canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*background: rgba(0,0,0,0.8); */
+    color: #d6d6d6;
+    padding: 2vmin 4vmin;
+    border-radius: 2vmin;
+    font-size: 4vmin;
+    display: none;
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+	/* Адаптивные настройки */
+    min-width: 30%;
+    max-width: 80%;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+/* Кнопки управления */
+.controls {
+    position: absolute;
+    bottom: 1vmin;       /* Прижимаем к нижнему краю */
+	max-width: 90%; 
+    max-height: 90%; 
+    margin: 0 auto; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* Выравнивание по нижнему краю */
+    z-index: 100; /* Поверх других элементов */
+    box-sizing: border-box; /* Учитываем padding в ширине */
+}
+/* Строки с кнопками */
+.control-row {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: clamp(60px, 10vw, 450px); /* Минимум 30px, максимум 500px, адаптивно под экран */
+}
+/* Сами кнопки */
+.control-btn {
+    width: 15vmin;
+    height: 15vmin;
+    max-width: 10vh; 
+    max-height: 10vh;
+	min-width: 45px;
+    min-height: 45px;
+    background: rgb(214, 214, 214);
+    border-radius: 1.5vmin;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 0.6vmin 1.2vmin rgba(0,0,0,0.1);
+}
+/* иконки кнопок */
+.control-icon {
+    width: 5vmin;
+    height: 5vmin;
+    max-width: 5vmin; 
+    max-height: 5vmin;
+	min-width: 14px;
+    min-height: 14px;
+}
+
+
+/* ------------------------------------------------------------ */
+/*                 ---Экран подтверждения выхода---             */
+/* ------------------------------------------------------------ */
+
+.exit-confirm-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.exit-confirm-screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.exit-confirm-content {
+    padding: 4vmin;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 80vmin;
+    text-align: center;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    display: flex; 
+    flex-direction: column; /* Вертикальное направление */
+    align-items: center; /* Центрируем по горизонтали */
+    justify-content: center; /* Центрируем по вертикали */
+}
+
+.exit-confirm-title {
+    color: #d6d6d6;
+    font-size: 6vmin;
+    margin-bottom: 0vmin;
+    text-shadow: 0 0 0.2vmin rgba(255,0,0,0.5);
+}
+
+.exit-confirm-message {
+    color: #d6d6d6;
+    font-size: 3vmin;
+    margin-bottom: 6vmin;
+    line-height: 1.4;
+}
+
+.exit-confirm-buttons {
+    display: flex;
+    gap: 4vmin;
+    width: 68vmin;
+    max-width: 70vmin;
+    justify-content: center;
+}
+
+.exit-confirm-btn {
+    padding: 2vmin 4vmin;
+    border: none;
+    border-radius: 6px;
+    font-size: 3.5vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.exit-confirm-yes {
+    background: #f44336;
+    color: white;
+}
+
+.exit-confirm-no {
+    background: #4CAF50;
+    color: white;
+}
+
+.exit-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------------------------------ */
+/*                 ---Адаптация для ландшафта---                */
+/* ------------------------------------------------------------ */
+
+@media (orientation: landscape) {
+    .score-container {
+        width: calc(100% - 20vmin); /* Учитываем место для контролов */
+        margin-left: 0;
+        padding: 0 2vmin;
+    }
+    
+    .exit-game-btn {
+        padding: 1vmin 2vmin;
+        font-size: 2.5vmin;
+    }
+}
+
+
+
+/* ------------------------------------------------------------ */
+/*                  ---Экран окончания игры---                  */
+/* ------------------------------------------------------------ */
+.game-over-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.game-over-screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.game-over-content {
+    padding: 2vw;
+    border-radius: 10px;
+    text-align: center;
+	align-items: center;
+    width: 80%;
+    max-width: 80vmin;
+    display: flex; 
+    flex-direction: column; /* Вертикальное направление */
+    align-items: center; /* Центрируем по горизонтали */
+    justify-content: center; /* Центрируем по вертикали */
+}
+
+.game-over-title {
+    color: #d6d6d6;
+    font-size: 6vmin;
+    margin-bottom: 3vmin;
+    text-shadow: 0 0 0.2vmin rgba(255,0,0,0.5);
+}
+
+.game-over-score {
+    color: #d6d6d6;
+    font-size: 3vmin;
+    margin-bottom: 6vmin;
+
+}
+
+.game-over-buttons {
+    display: flex;
+    gap: 4vmin;
+    width: 68vmin;
+    max-width: 70vmin;
+    justify-content: center;
+}
+
+.game-over-btn {
+    padding: 2vmin 4vmin;
+    border: none;
+    border-radius: 6px;
+    font-size: 3.5vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.game-over-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 2vmin rgba(255,255,255,0.2);
+}
+
+#restartButton {
+    background: #4CAF50;
+    color: white;
+}
+
+#exitButton {
+    background: #f44336;
+    color:  white;
+}
+
+/* ------------------------------------------------------------ */
+/*                      --Экран настроек---                     */
+/* ------------------------------------------------------------ */
+
+
+/* Стили для экрана настроек */
+.settings-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 1); /* Более плотный фон */
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.settings-screen.active {
+    opacity: 1;
+    display: flex;
+}
+
+.settings-content {
+    background: #161616;
+    padding: 4vmin;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 400px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+
+    text-align: left;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.settings-title {
+    color: #4CAF50;
+    font-size: 5vmin;
+    margin-bottom: 5vmin;
+    text-align: center;
+    text-shadow: 0 0 1vmin rgba(76, 175, 80, 0.3);
+}
+
+.settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+    margin-bottom: 4vmin;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2vmin 0;
+    /*border-bottom: 1px solid #801d1d;*/
+}
+
+.setting-name {
+    color: #d6d6d6;
+    font-size: 3.5vmin;
+    font-weight: 500;
+    flex: 1;
+}
+
+.setting-control {
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 1.5vmin 3vmin;
+    font-size: 3vmin;
+    min-width: 120px;
+   text-align: center;
+}
+
+.volume-slider-container {
+    position: relative;
+    width: 100px;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 2vmin;
+}
+
+.volume-tooltip {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4CAF50;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 2.5vmin;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.volume-tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #4CAF50;
+}
+
+.volume-slider:active + .volume-tooltip,
+.volume-slider:hover + .volume-tooltip {
+    opacity: 1;
+}
+
+.volume-slider {
+    width: 100px;
+    height: 12px;
+    -webkit-appearance: none;
+    background: #222;
+    border-radius: 6px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+    border: none;
+}
+
+.volume-value {
+    color: #d6d6d6;
+    font-size: 3vmin;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Стили для переключателя вибрации */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #222;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.settings-back-btn {
+    width: 100%;
+    padding: 2.5vmin;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 3.5vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settings-back-btn:hover {
+    background: #3e8e41;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ------------------------------------------------------------ */
+/*                     --Экран достижений--                     */
+/* ------------------------------------------------------------ */
+
+.achievements-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.achievements-screen.active {
+    opacity: 1;
+    display: flex;
+}
+
+.achievements-content {
+    background: #161616;
+    padding: 4vmin;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.achievements-title {
+    color: #4CAF50;
+    font-size: 5vmin;
+    margin-bottom: 4vmin;
+    text-shadow: 0 0 1vmin rgba(76, 175, 80, 0.3);
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 3vmin;
+    margin-bottom: 4vmin;
+}
+
+.achievement-item {
+    background: #222;
+    border-radius: 8px;
+    padding: 3vmin;
+    text-align: center;
+    transition: transform 0.2s ease;
+    border: 2px solid #333;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.achievement-item.unlocked {
+    border-color: #4CAF50;
+    background: linear-gradient(135deg, #1a2a1a 0%, #2a3a2a 100%);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.achievement-item.locked {
+    opacity: 0.5;
+    filter: grayscale(1);
+    background: #1a1a1a;
+}
+
+.achievement-item:hover {
+    transform: scale(1.05);
+}
+
+.achievement-icon {
+    font-size: 8vmin;
+    margin-bottom: 2vmin;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.achievement-item.unlocked .achievement-icon {
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.5));
+}
+
+.achievement-info {
+    color: #d6d6d6;
+    width: 100%;
+}
+
+.achievement-name {
+    font-size: 2.5vmin;
+    font-weight: bold;
+    margin-bottom: 1vmin;
+    color: #d6d6d6;
+}
+
+.achievement-item.unlocked .achievement-name {
+    color: #4CAF50;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.achievement-desc {
+    font-size: 2vmin;
+    opacity: 0.8;
+    line-height: 1.2;
+}
+
+.achievement-locked {
+    font-size: 2vmin;
+    color: #888;
+    font-style: italic;
+    margin-top: 1vmin;
+}
+
+.achievements-back-btn {
+    width: 100%;
+    padding: 2.5vmin;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 3.5vmin;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.achievements-back-btn:hover {
+    background: #3e8e41;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Уведомления о достижениях */
+.achievement-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #4CAF50;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.achievement-notification .achievement-icon {
+    font-size: 24px;
+    margin-bottom: 0;
+}
+
+.achievement-notification .achievement-text {
+    text-align: left;
+}
+
+.achievement-notification .achievement-title {
+    font-size: 12px;
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.achievement-notification .achievement-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    color: white;
+}
+
+.achievement-notification .achievement-desc {
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+
+
+}
+
+/* Горизонтальная ориентация */
+@media (orientation: landscape) {
+	
+	.score-container {
+        margin-left: auto;
+        justify-content: flex-end;
+        max-width: none; /* Сбрасываем ограничение */
+    }
+	
+    canvas {
+         margin-right: 0; /* Прижимаем canvas к правому краю */
+    /*order: -1;  Перемещаем счет в начало */
+    }
+    .controls {
+		position: absolute;
+        width: 30vmin;
+        margin: 0 0 0 2vmin;
+		justify-content: flex-end;
+        max-width: 90%;
+		max-height: 90%;
+		left: clamp(0px, 9vw, 300px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+        bottom: 2vmin;
+    }
+	
+	.control-btn {
+		width: 10vmin;
+		height: 10vmin;
+		max-width: 99vh;
+		max-height: 99vh;
+		min-width: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+		min-height: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+	}
+	
+    .control-row {
+        max-width: 99%;
+		max-height: 99%;
+        gap: clamp(40px, 10vw, 450px); /* Минимум 30px, максимум 50px, адаптивно под экран */
+    }
+	
+}

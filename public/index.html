@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Змейка</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/game.css">
+    <link rel="stylesheet" href="../styles/ui.css">
+</head>
+<body>
+    <div id="game-container" class="game-container">
+        
+        <div class="score-container">
+            <div class="score-box">
+                <span class="score-label">СЧЕТ:</span>
+                <span id="score" class="score-value">0</span>
+            </div>
+             <button id="exitGameBtn" class="exit-game-btn">✖</button>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls">
+            <div class="control-row">
+                <button class="control-btn" id="upBtn">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M12 6L5 15h14z" fill="rgb(214, 214, 214)" stroke="rgb(214, 214, 214)" stroke-linejoin="round" stroke-width="2.5"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" id="leftBtn">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M6 12l9-7v14z" fill="rgb(214, 214, 214)" stroke="rgb(214, 214, 214)" stroke-linejoin="round" stroke-width="2.5"/>
+                    </svg>
+                </button>
+                <button class="control-btn" id="rightBtn">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M18 12L9 5v14z" fill="rgb(214, 214, 214)" stroke="rgb(214, 214, 214)" stroke-linejoin="round" stroke-width="2.5"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="control-row">
+                <button class="control-btn" id="downBtn">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M12 18l7-9H5z" fill="rgb(214, 214, 214)" stroke="rgb(214, 214, 214)" stroke-linejoin="round" stroke-width="2.5"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="gameOverScreen" class="game-over-screen">
+        <div class="game-over-content">
+            <h2 class="game-over-title">Игра окончена!</h2>
+            <p class="game-over-score">Ваш счет: <span id="finalScore">0</span></p>
+            <div class="game-over-buttons">
+                <button id="exitButton" class="game-over-btn">Выйти</button>
+                <button id="restartButton" class="game-over-btn">Начать заново</button>
+                
+            </div>
+        </div>
+    </div>
+    <div id="exitConfirmScreen" class="exit-confirm-screen">
+        <div class="exit-confirm-content">
+            <h2 class="exit-confirm-title">Выход</h2>
+            <p class="exit-confirm-message">Вы уверены, что хотите выйти?</p>
+            <div class="exit-confirm-buttons">
+                <button id="exitConfirmButton" class="exit-confirm-btn exit-confirm-yes">Выйти</button>
+                <button id="exitCancelButton" class="exit-confirm-btn exit-confirm-no">Продолжить</button>
+            </div>
+        </div>
+    </div>
+    <div id="mainMenu" class="main-menu">
+        <div class="menu-content">
+            <h1 class="game-title">ЗМЕЙКА</h1>
+            <div class="menu-buttons">
+                <button id="playButton" class="menu-btn">ИГРАТЬ</button>
+                <button id="settingsButton" class="menu-btn">НАСТРОЙКИ</button>
+                <button id="achievementsButton" class="menu-btn">ДОСТИЖЕНИЯ</button>
+            </div>
+        </div>
+    </div>
+<div id="settingsScreen" class="settings-screen">
+    <div class="settings-content">
+        <h2 class="settings-title">НАСТРОЙКИ</h2>
+        
+        <div class="settings-grid">
+            <div class="setting-row">
+                <label class="setting-name">Режим управления</label>
+                <select id="controlMode" class="setting-control">
+                    <option value="swipe">Свайпы</option>
+                    <option value="buttons">Кнопки</option>
+                    <option value="keyboard">Клавиатура</option>
+                </select>
+            </div>
+            
+            <div class="setting-row">
+                <label class="setting-name">Громкость звука</label>
+                <div class="volume-control">
+                    <div class="volume-slider-container">
+                        <input type="range" id="soundVolume" class="volume-slider" min="0" max="100" value="70">
+                        <div id="volumeTooltip" class="volume-tooltip">70%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="setting-row">
+                <label class="setting-name">Вибрация</label>
+                <label class="switch">
+                    <input type="checkbox" id="vibrationToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <button id="settingsBackButton" class="settings-back-btn">Назад</button>
+    </div>
+</div>
+
+<!--
+    <div id="pauseIndicator">⏸️ ПАУЗА</div>
+-->
+
+    <script>
+        if (window.tronWeb) {
+            window.tronWeb = undefined; // Сбросит существующую инициализацию
+        }
+    </script>
+    <script type="module" src="/src/index.js"></script>
+</body>
+</html>

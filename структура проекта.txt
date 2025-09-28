@@ -1,0 +1,43 @@
+/snake-game
+├── public/
+│   ├── index.html
+│   └── assets/
+│       ├── images/
+│       ├── sounds/
+│       └── skins/
+│
+├── src/
+│   ├── core/
+│   │   ├── Game.js          # Главный контроллер
+│   │   ├── StateManager.js  # Управление состояниями
+│   │   ├── SoundManager.js
+│   │   └── Config.js
+│   │
+│   ├── scenes/             # Сцены игры
+│   │   ├── MenuScene.js
+│   │   ├── GameScene.js
+│   │   ├── GameOverScene.js
+│   │   ├── AchievementScene.js
+│   │   └── SettingsScene.js
+│   │
+│   ├── entities/           # Игровые объекты
+│   │   ├── Snake.js
+│   │   ├── GridManager.js
+│   │   ├── ParticleSystem.js
+│   │   ├── ProjectileManager.js
+│   │   ├── TemporaryFood.js
+│   │   └── Food.js
+│   │
+│   ├── systems/            # Подсистемы
+│   │   ├── InputManager.js
+│   │
+│   └── utils/
+│   │   ├── DOM.js
+│   │   └── EventBus.js    
+│   │
+│   └── index.js
+│
+└── styles/
+    ├── main.css
+    ├── game.css
+    └── ui.css
