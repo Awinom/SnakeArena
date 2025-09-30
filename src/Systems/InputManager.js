@@ -2,8 +2,6 @@ import Config from '../core/Config.js';
 
 export default class InputManager {
   constructor() {
-  this.touchStartX = 0;
-  this.touchStartY = 0;  
   this.controllers = new Set();
   this.shootHandlers = new Set(); // Обработчики выстрелов
   this.setupControls();
@@ -47,6 +45,11 @@ export default class InputManager {
   setupTouchControls() {
     const gameArea = document.getElementById('gameCanvas');
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let minSwipeDistance = 4; // Минимальное расстояние для определения свайпа
+    let hasProcessedSwipe = false; // Флаг для отслеживания обработанного свайпа
+    /*
     gameArea.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) { // Обрабатываем только одиночные касания
             this.touchStartX = e.touches[0].clientX;
@@ -62,31 +65,52 @@ export default class InputManager {
         }
     }, { passive: true });  
 
-/*
+*/
     gameArea.addEventListener('touchstart', (e) => {
-        this.touchStartX = e.touches[0].clientX;
-        this.touchStartY = e.touches[0].clientY;
+        if (e.touches.length === 1) { // Обрабатываем только одиночные касания
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            hasProcessedSwipe = false; // Сбрасываем флаг при новом касании
+        }
     }, { passive: true });
 
     gameArea.addEventListener('touchend', (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchEndY = e.changedTouches[0].clientY;
-        this.handleSwipe(touchEndX, touchEndY);
-    }, { passive: true });
+        if (e.changedTouches.length === 1) { // Обрабатываем только одиночные касания
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
 
-*/
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            // Проверяем, достаточно ли короткий свайп
+            if (Math.abs(dx) < minSwipeDistance && Math.abs(dy) < minSwipeDistance) {
+            this.handleShoot();
+            return; 
+            }
+        }
+    }, { passive: true }); 
+
+    gameArea.addEventListener('touchmove', (e) => {
+        if (hasProcessedSwipe) return; // Если уже обработали свайп - игнорируем
+        if (e.changedTouches.length === 1) { // Обрабатываем только одиночные касания
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            // Проверяем, достаточно ли длинный свайп
+            if (Math.abs(dx) > minSwipeDistance || Math.abs(dy) > minSwipeDistance) {
+            this.handleSwipe(dx, dy);
+            hasProcessedSwipe = true; // Помечаем, что свайп обработан
+            }
+        }
+    }, { passive: true });  
+
 
   }
 
-  handleSwipe(touchEndX, touchEndY) {
-      const dx = touchEndX - this.touchStartX;
-      const dy = touchEndY - this.touchStartY;
-      const minSwipeDistance = 30; // Минимальное расстояние для определения свайпа
-      // Проверяем, достаточно ли длинный свайп
-      if (Math.abs(dx) < minSwipeDistance && Math.abs(dy) < minSwipeDistance) {
-        this.handleShoot();
-        return; // Свайп слишком короткий
-      }
+  handleSwipe(dx, dy) {
       // Определяем направление свайпа
       if (Math.abs(dx) > Math.abs(dy)) {
           // Горизонтальный свайп

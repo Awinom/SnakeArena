@@ -179,7 +179,6 @@ export default class Game {
   // Вычисляем доступное пространство с учетом минимальных размеров
   const availableWidth = Math.max(window.innerWidth, Config.MIN_SCREEN_WIDTH);
   const availableHeight = Math.max(window.innerHeight, Config.MIN_SCREEN_HEIGHT);
-  const scoreContainer = document.querySelector('.score-container');
 
   // Ограничиваем максимальный размер (если нужно)
   const maxWidth = Math.min(availableWidth, availableWidth);
