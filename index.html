@@ -17,6 +17,7 @@
         
         // 2. ОБЯЗАТЕЛЬНОЕ ДЕЙСТВИЕ: Немедленно расширяем на весь экран
         tg.expand();
+        tg.requestFullscreen();
         
         // 3. КРИТИЧЕСКИ ВАЖНО: Отключаем вертикальные свайпы для закрытия
         // Это предотвращает случайное сворачивание и делает интерфейс стабильным
@@ -32,26 +33,6 @@
         
         // Скрываем верхнюю панель Telegram
         tg.hideTopBar();
-        
-        // 6. Дополнительная страховка: Запрашиваем полноэкранный режим через новый API
-        // Используйте это, если tg.expand() работает неидеально, особенно в последних версиях Telegram
-        if (tg.isFullscreen) {
-            // Уже в полноэкранном режиме
-        } else if (tg.requestFullscreen) {
-            // Запрашиваем полноэкранный режим, если метод доступен :cite[1]
-            tg.requestFullscreen();
-        }
-
-        // 7. Слушаем события изменения размера и всегда стремимся к полноэкранному режиму
-        tg.onEvent('viewportChanged', function() {
-            console.log('Viewport changed, ensuring fullscreen...');
-            tg.expand();
-        });
-        
-        // На случай, если полноэкранный режим не активировался сразу
-        setTimeout(() => {
-            tg.expand();
-        }, 100);
         
         console.log('Telegram Web App initialized in fullscreen mode');
     </script>
