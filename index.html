@@ -12,24 +12,46 @@
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         
-        // Расширяем на ВЕСЬ экран
+        // 1. Инициализируем приложение. Скрываем loading screen.
+        tg.ready();
+        
+        // 2. ОБЯЗАТЕЛЬНОЕ ДЕЙСТВИЕ: Немедленно расширяем на весь экран
         tg.expand();
         
-        // Отключаем свайп для закрытия
+        // 3. КРИТИЧЕСКИ ВАЖНО: Отключаем вертикальные свайпы для закрытия
+        // Это предотвращает случайное сворачивание и делает интерфейс стабильным
         tg.disableVerticalSwipes();
         
-        // Скрываем кнопку закрытия
+        // 4. Скрываем ненужные кнопки Telegram (нашу кнопку закрытия мы уберем)
         tg.MainButton.hide();
+        tg.BackButton.hide();
         
-        // Настраиваем цвета для полной интеграции
+        // 5. (ОПЦИОНАЛЬНО) Устанавливаем цвета для полного слияния с интерфейсом
         tg.setHeaderColor('#2c3e50');
         tg.setBackgroundColor('#2c3e50');
         
         // Скрываем верхнюю панель Telegram
         tg.hideTopBar();
         
-        // Инициализируем приложение
-        tg.ready();
+        // 6. Дополнительная страховка: Запрашиваем полноэкранный режим через новый API
+        // Используйте это, если tg.expand() работает неидеально, особенно в последних версиях Telegram
+        if (tg.isFullscreen) {
+            // Уже в полноэкранном режиме
+        } else if (tg.requestFullscreen) {
+            // Запрашиваем полноэкранный режим, если метод доступен :cite[1]
+            tg.requestFullscreen();
+        }
+
+        // 7. Слушаем события изменения размера и всегда стремимся к полноэкранному режиму
+        tg.onEvent('viewportChanged', function() {
+            console.log('Viewport changed, ensuring fullscreen...');
+            tg.expand();
+        });
+        
+        // На случай, если полноэкранный режим не активировался сразу
+        setTimeout(() => {
+            tg.expand();
+        }, 100);
         
         console.log('Telegram Web App initialized in fullscreen mode');
     </script>
