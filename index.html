@@ -12,22 +12,32 @@
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         
-        // Расширяем на весь экран
+        // Расширяем на ВЕСЬ экран
         tg.expand();
         
-        // Отключаем свайп-жесты для закрытия
-        tg.enableClosingConfirmation();
+        // Отключаем свайп для закрытия
+        tg.disableVerticalSwipes();
         
-        // Показываем основную кнопку закрытия
-        tg.MainButton.setText('ЗАКРЫТЬ').show();
-        tg.MainButton.onClick(function() {
-            tg.close();
-        });
+        // Скрываем кнопку закрытия
+        tg.MainButton.hide();
         
-        // Дополнительные настройки
+        // Настраиваем цвета для полной интеграции
         tg.setHeaderColor('#2c3e50');
         tg.setBackgroundColor('#2c3e50');
+        
+        // Скрываем верхнюю панель Telegram
+        tg.hideTopBar();
+        
+        // Инициализируем приложение
+        tg.ready();
+        
+        console.log('Telegram Web App initialized in fullscreen mode');
     </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2c3e50">
 </head>
 <body>
     <div id="game-container" class="game-container">
