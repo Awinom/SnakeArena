@@ -1,16 +1,16 @@
 /snake-game
-├── public/
-│   ├── index.html
-│   └── assets/
-│       ├── images/
-│       ├── sounds/
-│       └── skins/
+├── assets/
+│   ├── images/
+│   ├── sounds/
+│   ├── video/
+│   └── skins/
 │
 ├── src/
 │   ├── core/
 │   │   ├── Game.js          # Главный контроллер
 │   │   ├── StateManager.js  # Управление состояниями
 │   │   ├── SoundManager.js
+│   │   ├── AchievementManager.js
 │   │   └── Config.js
 │   │
 │   ├── scenes/             # Сцены игры
@@ -18,6 +18,8 @@
 │   │   ├── GameScene.js
 │   │   ├── GameOverScene.js
 │   │   ├── AchievementScene.js
+│   │   ├── ExitConfirmScene.js
+│   │   ├── VictoryScene.js
 │   │   └── SettingsScene.js
 │   │
 │   ├── entities/           # Игровые объекты
@@ -37,7 +39,10 @@
 │   │
 │   └── index.js
 │
-└── styles/
-    ├── main.css
-    ├── game.css
-    └── ui.css
+├── styles/
+│   ├── main.css
+│   ├── game.css
+│   └── ui.css
+│
+└── index.html
+
