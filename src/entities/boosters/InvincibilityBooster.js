@@ -1,6 +1,6 @@
 // entities/InvincibilityBooster.js
-import Collectible from './Collectible.js';
-import Config from '../core/Config.js';
+import Collectible from '../Collectible.js';
+import Config from '../../core/Config.js';
 
 export default class InvincibilityBooster extends Collectible {
     constructor() {

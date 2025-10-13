@@ -8,6 +8,8 @@ import Config from './Config.js';
 import InputManager from '../Systems/InputManager.js';
 import AchievementManager from './AchievementManager.js';
 import AchievementScene from '../scenes/AchievementScene.js';
+import SkinManager from './SkinManager.js';
+import SkinScene from '../scenes/SkinScene.js';
 import ExitConfirmScene from '../scenes/ExitConfirmScene.js';
 import VictoryScene from '../scenes/VictoryScene.js';
 import GridManager from '../entities/GridManager.js';
@@ -21,6 +23,8 @@ export default class Game {
     // Управление
     this.input = new InputManager();
     this.achievementManager = new AchievementManager(this);
+    // Добавляем менеджер скинов ДО инициализации сцен
+    this.skinManager = new SkinManager(this);
     this.gameLoopId = null; // Добавляем переменную для хранения ID игрового цикла
     // Инициализация сцен
     this.scenes = {
@@ -29,6 +33,7 @@ export default class Game {
       settings: new SettingsScene(this),
       gameOver: new GameOverScene(this),
       achievements: new AchievementScene(this),
+      skins: new SkinScene(this),
       exitConfirm: new ExitConfirmScene(this),
       victory: new VictoryScene(this)
     };
@@ -48,10 +53,12 @@ export default class Game {
   async init() {
       // Canvas setup
       this.initGameSize();
-      
+      await this.skinManager.loadSkins();
+
       // 2. Инициализация сцены
       this.scenes.game.init({
       input: this.input
+      //,skinManager: this.skinManager // Передаем skinManager в game scene
       });
 
       // Загружаем звуки

@@ -23,6 +23,8 @@
 │   │   └── SettingsScene.js
 │   │
 │   ├── entities/           # Игровые объекты
+│   │   ├── boosters/
+│   │   │   └── InvincibilityBooster.js
 │   │   ├── Snake.js
 │   │   ├── Collectible.js
 │   │   ├── GridManager.js

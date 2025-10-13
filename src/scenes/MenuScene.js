@@ -10,6 +10,7 @@ export default class MenuScene {
         this.playButton = document.getElementById('playButton');
         this.settingsButton = document.getElementById('settingsButton');
         this.achievementsButton = document.getElementById('achievementsButton');
+        this.skinsButton = document.getElementById('skinsButton');
 
         this.playButton.addEventListener('click', () => {
             this.hide();            
@@ -26,6 +27,11 @@ export default class MenuScene {
             this.hide();
             this.game.stateManager.showScreen('achievements');
         });
+
+        this.skinsButton.addEventListener('click', () => {
+        this.hide();
+        this.game.stateManager.showScreen('skins');
+    });
 
     }
 

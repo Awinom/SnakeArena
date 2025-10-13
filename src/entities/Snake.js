@@ -1,7 +1,7 @@
 import Config from '../core/Config.js';
 
 export default class Snake {
-  constructor() {
+  constructor(skinManager = null) {
     this.body = [{ x: Math.floor(Config.GRID_COUNT_X/2)+ Config.GRID_COUNT_X%2, y: Math.floor(Config.GRID_COUNT_Y/2) +Config.GRID_COUNT_Y%2 }];
     this.direction = null;//'right';
     this.nextDirection = null;//'right';
@@ -9,6 +9,9 @@ export default class Snake {
 
     // Добавляем флаг активности
     this.isActive = false;
+
+    // Ссылка на менеджер скинов
+    this.skinManager = skinManager;
 
     // Для плавного движения
     this.renderPositions = this.body.map(segment => ({
@@ -24,6 +27,32 @@ export default class Snake {
     this.isInvincible = false;
     this.invincibilityEndTime = 0;
     this.invincibilityPulse = 0;
+
+    
+  }
+
+  // Получаем текущий скин
+  getCurrentSkin() {
+    // Если skinManager не передан, используем дефолтные цвета
+    if (!this.skinManager || !this.skinManager.getCurrentSkin) {
+        return {
+            headColor: Config.COLORS.SNAKE_HEAD,
+            bodyColor: Config.COLORS.SNAKE_BODY,
+            tailColor: Config.COLORS.SNAKE_BODY,
+            useColors: true
+        };
+    }
+    try {
+        return this.skinManager.getCurrentSkin();
+    } catch (error) {
+        console.warn('Error getting current skin, using default colors:', error);
+        return {
+            headColor: Config.COLORS.SNAKE_HEAD,
+            bodyColor: Config.COLORS.SNAKE_BODY,
+            tailColor: Config.COLORS.SNAKE_BODY,
+            useColors: true
+        };
+    }
   }
 
   getHead() {
@@ -273,7 +302,7 @@ export default class Snake {
   }
 
   // Новый метод для отрисовки сегментов при телепортации
-  drawTeleportSegments(ctx, x, y, size, isHead, canvasWidth, canvasHeight) {
+  drawTeleportSegments(ctx, x, y, segmentType, direction, skin, canvasWidth, canvasHeight,size) {
       // Проверяем, пересекает ли сегмент границы экрана
       const segments = [];
       
@@ -311,58 +340,169 @@ export default class Snake {
       
       // Отрисовываем все дополнительные сегменты
       segments.forEach(segment => {
-          this.drawSegment(ctx, segment.x, segment.y, size, isHead);
+          this.drawSegment(ctx, segment.x, segment.y, segmentType, direction, skin);
       });
   }
 
-  // Вспомогательный метод для отрисовки одного сегмента
-  drawSegment(ctx, x, y, size, isHead) {
+  // Определяем направление сегмента для правильного поворота изображения
+  getSegmentDirection(segmentIndex) {
+      if (segmentIndex === 0) {
+          // Голова - используем текущее направление
+          return this.direction || 'left';
+      } else if (segmentIndex === this.renderPositions.length - 1) {
+          // Хвост - направление от предпоследнего сегмента к хвосту
+          return this.getDirectionBetweenSegments(
+              this.renderPositions[segmentIndex],
+              this.renderPositions[segmentIndex - 1]
+              
+          );
+      } else {
+          // Тело - направление между соседними сегментами
+          return this.getDirectionBetweenSegments(
+              this.renderPositions[segmentIndex],
+              this.renderPositions[segmentIndex - 1]
+          );
+      }
+  }
+
+  getDirectionBetweenSegments(from, to) {
+      // Корректируем разницу для телепортации через границы
+      let dx = to.x - from.x;
+      let dy = to.y - from.y;
+      
+      // Корректируем для телепортации
+      if (Math.abs(dx) > Config.GRID_COUNT_X / 2) {
+          dx = dx > 0 ? dx - Config.GRID_COUNT_X : dx + Config.GRID_COUNT_X;
+      }
+      if (Math.abs(dy) > Config.GRID_COUNT_Y / 2) {
+          dy = dy > 0 ? dy - Config.GRID_COUNT_Y : dy + Config.GRID_COUNT_Y;
+      }
+      
+      // Определяем основное направление
+      if (Math.abs(dx) > Math.abs(dy)) {
+          return dx > 0 ? 'right' : 'left';
+      } else {
+          return dy > 0 ? 'down' : 'up';
+      }
+  }
+
+  // Основной метод отрисовки сегмента с изображением
+  drawSegment(ctx, x, y, segmentType, direction, skin) {
+      ctx.save();
+      
+      // Центрируем преобразования
+      const centerX = x + Config.GRID_SIZE / 2;
+      const centerY = y + Config.GRID_SIZE / 2;
+      ctx.translate(centerX, centerY);
+      
+      // Применяем поворот в зависимости от направления
+      const rotation = this.getRotationAngle(direction);
+      ctx.rotate(rotation);
+      
+      // Если есть изображения - используем их, иначе fallback на цвета
+      if (skin.images && skin.images[segmentType]) {
+          this.drawImageSegment(ctx, segmentType, skin);
+      } else {
+          this.drawColorSegment(ctx, segmentType, skin);
+      }
+      
+      ctx.restore();
+  }
+
+  getRotationAngle(direction) {
+      switch (direction) {
+          case 'down': return -Math.PI / 2;
+          case 'up': return Math.PI / 2;
+          case 'right': return Math.PI;
+          case 'left': return 0;
+          default: return 0;
+      }
+  }
+
+  drawImageSegment(ctx, segmentType, skin) {
+      const img = skin.images[segmentType];
+      const drawWidth = Config.GRID_SIZE;
+      const drawHeight = Config.GRID_SIZE;
+      
+      // Рисуем изображение с центром в (0,0)
+      ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+  }
+
+  drawColorSegment(ctx, segmentType, skin) {
+      // Fallback на цветовую отрисовку если изображения не загрузились
+      let color;
+      switch (segmentType) {
+          case 'head': color = skin.headColor; break;
+          case 'tail': color = skin.tailColor; break;
+          default: color = skin.bodyColor; break;
+      }
+      
+      ctx.fillStyle = color;
+      const size = segmentType === 'head' ? Config.GRID_SIZE : Config.GRID_SIZE * 0.8;
+      const offset = (Config.GRID_SIZE - size) / 2;
+      
       ctx.beginPath();
-      ctx.roundRect(x, y, size, size, isHead ? 6 : 4);
+      ctx.roundRect(-size / 2, -size / 2, size, size, segmentType === 'head' ? 6 : 4);
       ctx.fill();
   }
+
+  drawInvincibilityEffect(ctx, x, y, segmentType) {
+      const pulse = Math.sin(this.invincibilityPulse) * 0.3 + 0.7;
+      const centerX = x + Config.GRID_SIZE / 2;
+      const centerY = y + Config.GRID_SIZE / 2;
+      
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      
+      ctx.fillStyle = `rgba(65, 105, 225, ${0.3 * pulse})`;
+      const shieldSize = Config.GRID_SIZE * 1.2;
+      
+      ctx.beginPath();
+      ctx.roundRect(-shieldSize / 2, -shieldSize / 2, shieldSize, shieldSize, 6);
+      ctx.fill();
+      
+      ctx.restore();
+  }
+
 
 
   // Отрисовка змейки
   draw(ctx) {
+
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
+
+    const skin = this.getCurrentSkin();
+
+    // Если skinManager не доступен, используем старую логику отрисовки
+    if (!this.skinManager) {
+        console.warn('Skin manager not available, using fallback rendering');
+    }
 
     // Рисуем все сегменты
     for (let i = 0; i < this.renderPositions.length; i++) {
       const pos = this.renderPositions[i];
       const isHead = i === 0;
+      const isTail = i === this.renderPositions.length - 1;
+      const segmentType = isHead ? 'head' : (isTail ? 'tail' : 'body');
       const size = isHead ? Config.GRID_SIZE : Config.GRID_SIZE * 0.8;
-      const offset = (Config.GRID_SIZE - size) / 2;
       
-      const x = pos.x * Config.GRID_SIZE + offset;
-      const y = pos.y * Config.GRID_SIZE + offset;
+      const x = pos.x * Config.GRID_SIZE ;
+      const y = pos.y * Config.GRID_SIZE ;
       
-      // Определяем цвет в зависимости от состояния сегмента
-      if (i === 0) {
-          ctx.fillStyle = Config.COLORS.SNAKE_HEAD; // Голова
-      } else {
-          ctx.fillStyle = Config.COLORS.SNAKE_BODY; // Тело
-      }
+      // Определяем направление для поворота изображения
+      const direction = this.getSegmentDirection(i);
 
-      // Отрисовываем основной сегмент
-      this.drawSegment(ctx, x, y, size, isHead);
+      // Отрисовываем сегмент с учетом типа и направления
+      this.drawSegment(ctx, x, y, segmentType, direction, skin);
 
-      // Эффект неуязвимости - синяя полупрозрачная оболочка
+      // Эффект неуязвимости
       if (this.isInvincible) {
-          const pulse = Math.sin(this.invincibilityPulse) * 0.3 + 0.7;
-          ctx.fillStyle = `rgba(65, 105, 225, ${0.3 * pulse})`;
-          
-          const shieldSize = size * 1.2;
-          const shieldOffset = (Config.GRID_SIZE - shieldSize) / 2;
-          const shieldX = pos.x * Config.GRID_SIZE + shieldOffset;
-          const shieldY = pos.y * Config.GRID_SIZE + shieldOffset;
-          
-          this.drawSegment(ctx, shieldX, shieldY, shieldSize, isHead);
+          this.drawInvincibilityEffect(ctx, x, y, segmentType);
       }
 
       // Отрисовываем дополнительные сегменты при телепортации через границы
-      this.drawTeleportSegments(ctx, x, y, size, isHead, canvasWidth, canvasHeight);
+      this.drawTeleportSegments(ctx, x, y, segmentType, direction, skin, canvasWidth, canvasHeight,size);
     }
   }
 }

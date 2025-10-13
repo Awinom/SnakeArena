@@ -4,12 +4,12 @@ import TemporaryFood from '../entities/TemporaryFood.js';
 import ParticleSystem from '../entities/ParticleSystem.js';
 import Config from '../core/Config.js';
 import Food from '../entities/Food.js'; 
-import InvincibilityBooster from '../entities/InvincibilityBooster.js';
+import InvincibilityBooster from '../entities/boosters/InvincibilityBooster.js';
 
 export default class GameScene {
   constructor(game) {
-    this.game = game;
-    this.snake = new Snake();
+    this.game = game;// Передаем skinManager в змейку
+    this.snake = new Snake(this.game.skinManager);
     this.food = new Food();
     this.score = 0;
     // Находим элемент счета (предполагая, что у него есть id="score")
@@ -24,13 +24,11 @@ export default class GameScene {
     this.lastBoosterSpawnTime = 0;
     this.boosterSpawnInterval = 15000; // 15 секунд
 
-
     // Для еды используем все занятые позиции (включая старую еду)
     const occupiedPositions = [
       ...this.snake.body
     ];
     this.food.spawn(occupiedPositions);
-
 
     // Добавляем систему частиц
     this.particleSystem = new ParticleSystem();
@@ -70,9 +68,10 @@ export default class GameScene {
     }
   }
 
-  init({ input }) {  // Передаем game только при инициализации
-    this.setupInput(input);
-  }
+  // Обновляем метод init
+    init({ input }) {  
+        this.setupInput(input);
+    }
 
   setupInput(inputManager) {
     // Регистрируем обработчик направлений
@@ -373,16 +372,13 @@ export default class GameScene {
   }
 
   reset() {
-    this.snake = new Snake();
-   // this.food = new Food();
-
+    // Пересоздаем змейку с текущим skinManager
+    this.snake = new Snake(this.game.skinManager);
     // Инициализируем 
     const occupiedPositions = [
       ...this.snake.body
     ];
     this.food.spawn(occupiedPositions);
-
-
 
     this.projectileManager.clear(); // Очищаем снаряды
     this.particleSystem.clear(); // Очищаем частицы
