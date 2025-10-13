@@ -62,6 +62,7 @@ export default class Game {
           //await this.soundManager.loadSound('cut', './assets/sounds/cut.mp3');
           //await this.soundManager.loadSound('projectileCollision', './assets/sounds/projectile_collision.mp3');
           //await this.soundManager.loadSound('victory', './assets/sounds/victory.mp3');
+          //await this.soundManager.loadSound('boost', './assets/sounds/boost.mp3'); // Добавляем звук бустера
           console.log('Sounds loaded successfully');
       } catch (e) {
           console.error('Failed to load sounds:', e);
@@ -111,7 +112,7 @@ export default class Game {
       this.soundManager.setVolume(this.settings.soundVolume);
       
       // Здесь можно добавить логику для звука и вибрации
-      console.log('Settings applied:', this.settings);
+      //console.log('Settings applied:', this.settings);
   }
 
   // Добавляем метод для запуска игрового цикла

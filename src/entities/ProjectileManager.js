@@ -97,6 +97,14 @@ export default class ProjectileManager {
                 continue;
             }
 
+            // Проверяем столкновение с бустерами
+            const boosterCollision = this.checkBoosterCollision(projectile, this.gameScene.boosters);
+            if (boosterCollision) {
+                this.gameScene.handleBoosterHit(boosterCollision.index);
+                this.projectiles.splice(i, 1);
+                continue;
+            }
+
             // Проверяем столкновение со змейкой
             const snakeCollision = this.checkSnakeCollision(projectile, this.gameScene.snake);
             if (snakeCollision) {
@@ -131,6 +139,25 @@ export default class ProjectileManager {
         
         // Проверяем столкновение (расстояние меньше суммы радиусов)
         return distance < (projectile.size + foodSize);
+    }
+
+    // Добавляем метод проверки столкновения с бустерами
+    checkBoosterCollision(projectile, boosters) {
+        for (let i = boosters.length - 1; i >= 0; i--) {
+            const booster = boosters[i];
+            const boosterX = booster.x * Config.GRID_SIZE + Config.GRID_SIZE / 2;
+            const boosterY = booster.y * Config.GRID_SIZE + Config.GRID_SIZE / 2;
+            const boosterSize = Config.GRID_SIZE;
+            
+            const dx = projectile.x - boosterX;
+            const dy = projectile.y - boosterY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < (projectile.size + boosterSize) / 2) {
+                return { index: i, booster: booster };
+            }
+        }
+        return null;
     }
 
     // Добавляем метод проверки столкновения с временной едой

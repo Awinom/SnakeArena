@@ -1,9 +1,10 @@
 import Snake from '../entities/Snake.js';
-import Food from '../entities/Food.js';
 import ProjectileManager from '../entities/ProjectileManager.js';
 import TemporaryFood from '../entities/TemporaryFood.js';
 import ParticleSystem from '../entities/ParticleSystem.js';
 import Config from '../core/Config.js';
+import Food from '../entities/Food.js'; 
+import InvincibilityBooster from '../entities/InvincibilityBooster.js';
 
 export default class GameScene {
   constructor(game) {
@@ -17,6 +18,19 @@ export default class GameScene {
 
     this.projectileManager = new ProjectileManager(this);
     this.temporaryFoods = [];
+
+    // Добавляем систему бустеров
+    this.boosters = [];
+    this.lastBoosterSpawnTime = 0;
+    this.boosterSpawnInterval = 15000; // 15 секунд
+
+
+    // Для еды используем все занятые позиции (включая старую еду)
+    const occupiedPositions = [
+      ...this.snake.body
+    ];
+    this.food.spawn(occupiedPositions);
+
 
     // Добавляем систему частиц
     this.particleSystem = new ParticleSystem();
@@ -91,9 +105,14 @@ export default class GameScene {
     // Обновляем систему частиц
     this.particleSystem.update(deltaTime);
 
-    // Сьели еду
-    if (this.food.isEatenBy(this.snake.getHead())) {
-        this.EatenFood();        
+    // Обновляем бустеры
+    this.updateBoosters();
+    // Спавним новые бустеры
+    this.trySpawnBooster();
+
+    // Сьели тестовую еду
+    if (this.food.isCollectedBy(this.snake.getHead())) {
+        this.EatenFood();
     }
 
     // Проверяем столкновение с временной едой
@@ -110,13 +129,14 @@ export default class GameScene {
         }
         
         // Проверяем, съедена ли временная еда
-        if (tempFood.isEatenBy(this.snake.getHead())) {
+        if (tempFood.isCollectedBy(this.snake.getHead())) {
             this.canibal++;
             this.snake.grow();
             this.game.soundManager.playSound('eat');
             this.temporaryFoods.splice(i, 1);
             this.score++;
         }
+
     }
 
     // Столкновение с собой
@@ -139,6 +159,45 @@ export default class GameScene {
 
   }
 
+  // Добавляем метод для обновления бустеров
+  updateBoosters() {
+    // Обновляем существующие бустеры
+    this.boosters.forEach(booster => booster.update());
+
+    // Проверяем сбор бустеров змейкой
+    for (let i = this.boosters.length - 1; i >= 0; i--) {
+      const booster = this.boosters[i];
+      if (booster.isCollectedBy(this.snake.getHead())) {
+        booster.onCollect(this.game);
+        this.boosters.splice(i, 1);
+      }
+    }
+  }
+
+  // Добавляем метод для спавна бустеров
+  trySpawnBooster() {
+    const currentTime = Date.now();
+
+    // Проверяем, не достигли ли лимита бустеров
+    if (this.boosters.length >= 2) {
+        return;
+    }
+    
+    if (currentTime - this.lastBoosterSpawnTime >= this.boosterSpawnInterval) {
+      const occupiedPositions = this.getOccupiedPositions();
+      const booster = new InvincibilityBooster();
+      
+      if (booster.spawn(occupiedPositions)) {
+        this.boosters.push(booster);
+        this.lastBoosterSpawnTime = currentTime;
+        //console.log("New invincibility booster spawned");
+      } else {
+        // Если не удалось заспавнить, пробуем через 5 секунд
+        this.lastBoosterSpawnTime = currentTime - this.boosterSpawnInterval + 5000;
+      }
+    }
+  }
+
   render(ctx) {
     if (!this.isActive) return; // Не отрисовываем, если сцена не активна
     // Очистка
@@ -147,7 +206,8 @@ export default class GameScene {
 
     
     this.temporaryFoods.forEach(food => food.draw(ctx)); // Рисуем временную еду
-    this.food.draw(ctx);  // Рисуем еду
+    this.food.draw(ctx); // Рисуем еду
+    this.boosters.forEach(booster => booster.draw(ctx)); // Бустеры поверх еды
     this.projectileManager.draw(ctx); // Отрисовываем снаряды
     this.snake.draw(ctx);
     // Рисуем частицы (поверх всего)
@@ -160,21 +220,48 @@ export default class GameScene {
     }
   }
 
+  //Получает все занятые позиции на поле
+  getOccupiedPositions() {
+    return [
+      ...this.snake.body,
+      ...this.temporaryFoods.map(food => ({ x: food.x, y: food.y })),
+      ...this.boosters.map(booster => ({ x: booster.x, y: booster.y })),
+      { x: this.food.x, y: this.food.y }
+    ];
+  }
+
+  handleBoosterHit(boosterIndex) {
+    if (boosterIndex >= 0 && boosterIndex < this.boosters.length) {
+        const booster = this.boosters[boosterIndex];
+        
+        // Активируем бустер
+        booster.onCollect(this.game);
+        
+        // Удаляем бустер
+        this.boosters.splice(boosterIndex, 1);
+        
+        //console.log("Снаряд попал в бустер неуязвимости!");
+    }
+  }
+
   handleFoodHit() {
     // Вызываем тот же метод, что и при съедании еды змейкой
     this.EatenFood();
     this.snake.grow();
-    this.score++;
+    this.score++; // при попадании выстрелом +2 очка
     this.projectilesHit++;
-  }
-
+  } 
+  //Обработка сбора тестовой еды
   EatenFood() {
     this.snake.grow();
     this.game.soundManager.playSound('eat');
     this.game.soundManager.vibrate(50);
     this.score++;
-    this.food.spawn(this.snake.body);
-
+    
+    // Спавним еду с учетом всех занятых позиций
+    const occupiedPositions = this.getOccupiedPositions();
+    this.food.spawn(occupiedPositions);
+    
     this.rageTimeSum = this.rageTime + this.rageTimeSum;
     this.rageTime = 0;
 
@@ -186,22 +273,28 @@ export default class GameScene {
         this.currentCombo = 1;
         this.rageTimeSum = 0;
     }
-
-    //console.log('this.rageTimeSum: ', this.rageTimeSum);
-  } 
+  }
 
   handleSnakeCut(segmentIndex) {
-    // Разрезаем змейку
-    const cutSegments = this.snake.cutAt(segmentIndex);
-    
-    if (cutSegments && cutSegments.length > 0) {
-        // Создаем временную еду для каждого отрезанного сегмента
-        cutSegments.forEach(segment => {
-            this.temporaryFoods.push(new TemporaryFood(segment.x, segment.y));
-        });
-        
-        this.game.soundManager.playSound('cut');
-        this.game.soundManager.vibrate([50, 50, 50]);
+    if (this.snake.isInvincible) {
+      // Добавляем очки и воспроизводим звук
+        this.snake.grow();
+        this.score++;
+        this.game.soundManager.playSound('eat');
+    }
+    else {
+      // Разрезаем змейку
+      const cutSegments = this.snake.cutAt(segmentIndex);
+      
+      if (cutSegments && cutSegments.length > 0) {
+          // Создаем временную еду для каждого отрезанного сегмента
+          cutSegments.forEach(segment => {
+              this.temporaryFoods.push(new TemporaryFood(segment.x, segment.y));
+          });
+          
+          this.game.soundManager.playSound('cut');
+          this.game.soundManager.vibrate([50, 50, 50]);
+      }
     }
   }
 
@@ -237,8 +330,16 @@ export default class GameScene {
 
   // Выстрел в себя
   GameOverShoot() {
+    if (this.snake.isInvincible) {
+      // Добавляем очки и воспроизводим звук
+        this.snake.grow();
+        this.score++;
+        this.game.soundManager.playSound('eat');
+    }
+    else {
     this.HeadShoot++;
     this.GameOver(); // Логика конца игры
+    }
   }
 
   GameOver() {
@@ -273,7 +374,16 @@ export default class GameScene {
 
   reset() {
     this.snake = new Snake();
-    this.food = new Food();
+   // this.food = new Food();
+
+    // Инициализируем 
+    const occupiedPositions = [
+      ...this.snake.body
+    ];
+    this.food.spawn(occupiedPositions);
+
+
+
     this.projectileManager.clear(); // Очищаем снаряды
     this.particleSystem.clear(); // Очищаем частицы
     this.temporaryFoods = [];
@@ -282,6 +392,10 @@ export default class GameScene {
       this.scoreElement.textContent = '0';
     }
     this.isActive = true;
+
+    // Сбрасываем бустеры
+    this.boosters = [];
+    this.lastBoosterSpawnTime = 0;
 
     //Достижения 
     this.survivalTime = 0;

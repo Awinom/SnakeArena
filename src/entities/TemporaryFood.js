@@ -1,7 +1,7 @@
-import Food from './Food.js';
+import Collectible from './Collectible.js';
 import Config from '../core/Config.js';
 
-export default class TemporaryFood extends Food {
+export default class TemporaryFood extends Collectible {
     constructor(x, y, lifetime = 10000) {
         super([]); // Не используем стандартный спавн
         this.x = x;
@@ -16,6 +16,7 @@ export default class TemporaryFood extends Food {
         this.blinkInterval = 200; // Интервал мигания в мс
         this.isVisible = true; // Текущее состояние видимости
         this.lastBlinkTime = Date.now();
+        this.isActive = true;
     }
 
     update() {

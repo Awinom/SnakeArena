@@ -19,6 +19,11 @@ export default class Snake {
     }));
 
     this.segmentStates = new Map(); // Для отслеживания состояния сегментов
+
+    // Добавляем свойства для неуязвимости
+    this.isInvincible = false;
+    this.invincibilityEndTime = 0;
+    this.invincibilityPulse = 0;
   }
 
   getHead() {
@@ -60,6 +65,9 @@ export default class Snake {
     } else {
       this.growthCounter--;
     }
+
+    // Обновляем состояние неуязвимости
+    this.updateInvincibility();
     
     // Обновляем целевые позиции для плавного движения
     this.updateRenderTargets();
@@ -68,6 +76,33 @@ export default class Snake {
   // Добавляем метод активации
   activate() {
       this.isActive = true;
+  }
+
+  // Добавляем методы для управления неуязвимостью
+  activateInvincibility(duration) {
+      this.isInvincible = true;
+      this.invincibilityEndTime = Date.now() + duration;
+      //console.log("Invincibility activated for", duration, "ms");
+  }
+
+  deactivateInvincibility() {
+      this.isInvincible = false;
+      this.invincibilityEndTime = 0;
+      //console.log("Invincibility deactivated");
+  }
+
+  updateInvincibility() {
+      if (this.isInvincible && Date.now() > this.invincibilityEndTime) {
+          this.deactivateInvincibility();
+      }
+      
+      // Анимация пульсации для визуального эффекта
+      if (this.isInvincible) {
+          this.invincibilityPulse += 0.1;
+          if (this.invincibilityPulse > Math.PI * 2) {
+              this.invincibilityPulse = 0;
+          }
+      }
   }
 
   // Модифицируем метод для установки направления
@@ -222,7 +257,13 @@ export default class Snake {
     }
 
   // Проверка столкновений
-  checkSelfCollision() {    
+  checkSelfCollision() {
+
+    // Если неуязвимость активна - игнорируем самстолкновение
+    if (this.isInvincible) {
+        return false;
+    }
+
     const head = this.getHead();
     
     // столкновение с собой
@@ -306,6 +347,19 @@ export default class Snake {
 
       // Отрисовываем основной сегмент
       this.drawSegment(ctx, x, y, size, isHead);
+
+      // Эффект неуязвимости - синяя полупрозрачная оболочка
+      if (this.isInvincible) {
+          const pulse = Math.sin(this.invincibilityPulse) * 0.3 + 0.7;
+          ctx.fillStyle = `rgba(65, 105, 225, ${0.3 * pulse})`;
+          
+          const shieldSize = size * 1.2;
+          const shieldOffset = (Config.GRID_SIZE - shieldSize) / 2;
+          const shieldX = pos.x * Config.GRID_SIZE + shieldOffset;
+          const shieldY = pos.y * Config.GRID_SIZE + shieldOffset;
+          
+          this.drawSegment(ctx, shieldX, shieldY, shieldSize, isHead);
+      }
 
       // Отрисовываем дополнительные сегменты при телепортации через границы
       this.drawTeleportSegments(ctx, x, y, size, isHead, canvasWidth, canvasHeight);
