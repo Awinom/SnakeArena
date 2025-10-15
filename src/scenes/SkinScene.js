@@ -127,17 +127,30 @@ export default class SkinScene {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 2px;
+                gap: 0px;
                 transform: scale(1.5);
             }
 
-            .skin-segment-img {
-                width: 16px;
-                height: 16px;
-                image-rendering: pixelated;
-                image-rendering: -moz-crisp-edges;
-                image-rendering: crisp-edges;
+            /* НОВЫЕ СТИЛИ ДЛЯ КОНТЕЙНЕРОВ ИЗОБРАЖЕНИЙ */
+            .skin-segment-container {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
             }
+
+            .skin-segment-img {
+            max-width: 110%; /* Чтобы близко друг к другу были и небыло видно пробелов */
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain; /* Сохраняем пропорции */
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
 
             .skin-info {
                 color: #d6d6d6;
@@ -238,9 +251,15 @@ export default class SkinScene {
         if (skin.images) {
             return `
                 <div class="skin-snake-preview">
-                    <img src="${skin.head}" class="skin-segment-img" alt="Голова">
-                    <img src="${skin.body}" class="skin-segment-img" alt="Тело">
-                    <img src="${skin.tail}" class="skin-segment-img" alt="Хвост">
+                    <div class="skin-segment-container">
+                        <img src="${skin.head}" class="skin-segment-img" alt="Голова" data-type="head">
+                    </div>
+                    <div class="skin-segment-container">
+                        <img src="${skin.body}" class="skin-segment-img" alt="Тело" data-type="body">
+                    </div>
+                    <div class="skin-segment-container">
+                        <img src="${skin.tail}" class="skin-segment-img" alt="Хвост" data-type="tail">
+                    </div>
                 </div>
             `;
         } else {

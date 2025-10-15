@@ -420,12 +420,31 @@ export default class Snake {
   }
 
   drawImageSegment(ctx, segmentType, skin) {
-      const img = skin.images[segmentType];
-      const drawWidth = Config.GRID_SIZE;
-      const drawHeight = Config.GRID_SIZE;
+    const img = skin.images[segmentType];
+    const cellSize = Config.GRID_SIZE;
+    // Получаем оригинальные размеры изображения
+    const imgWidth = img.naturalWidth || img.width;
+    const imgHeight = img.naturalHeight || img.height;
+    
+    // Вычисляем соотношения сторон
+    const imgAspect = imgWidth / imgHeight;
+    const cellAspect = 1; // Клетка квадратная
+    
+    let drawWidth, drawHeight;
+    
+    // Определяем, как вписать изображение в клетку с сохранением пропорций
+    if (imgAspect > cellAspect) {
+        // Широкое изображение - ограничиваем по ширине
+        drawWidth = cellSize;
+        drawHeight = cellSize / imgAspect;
+    } else {
+        // Высокое или квадратное изображение - ограничиваем по высоте
+        drawHeight = cellSize;
+        drawWidth = cellSize * imgAspect;
+    }
       
-      // Рисуем изображение с центром в (0,0)
-      ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+    // Рисуем изображение с центром в (0,0)
+    ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
   }
 
   drawColorSegment(ctx, segmentType, skin) {
@@ -480,7 +499,7 @@ export default class Snake {
     }
 
     // Рисуем все сегменты
-    for (let i = 0; i < this.renderPositions.length; i++) {
+    for (let i = this.renderPositions.length-1; i >= 0; i--) {
       const pos = this.renderPositions[i];
       const isHead = i === 0;
       const isTail = i === this.renderPositions.length - 1;
